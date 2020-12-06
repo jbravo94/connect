@@ -25,6 +25,7 @@
 		<property name="connectors.doc" value="${extensions}/doc" />
 		<property name="connectors.smtp" value="${extensions}/smtp" />
 		<property name="connectors.tcp" value="${extensions}/tcp" />
+		<property name="connectors.astmlight" value="${extensions}/astmlight" />
 		<property name="connectors.file" value="${extensions}/file" />
 		<property name="connectors.js" value="${extensions}/js" />
 		<property name="connectors.ws" value="${extensions}/ws" />
@@ -366,6 +367,30 @@
 				<exclude name="com/mirth/connect/connectors/tcp/TcpReceiverProperties.class" />
 				<exclude name="com/mirth/connect/connectors/tcp/TcpDispatcherProperties.class" />
 				<exclude name="com/mirth/connect/connectors/tcp/TcpConnectorServletInterface.class" />
+			</fileset>
+		</jar>
+
+		<!-- connectors.astmlight -->
+		<mkdir dir="${connectors.astmlight}" />
+		<copy todir="${connectors.astmlight}">
+			<fileset dir="${src}/com/mirth/connect/connectors/astmlight">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${connectors.astmlight}/lib" failonerror="false">
+			<fileset dir="${lib.extensions}/astmlight" />
+		</copy>
+		<jar destfile="${connectors.astmlight}/astmlight-shared.jar" basedir="${classes}">
+			<include name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
+			<include name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
+			<include name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
+		</jar>
+		<jar destfile="${connectors.astmlight}/astmlight-server.jar">
+			<fileset dir="${classes}">
+				<include name="com/mirth/connect/connectors/astmlight/**" />
+				<exclude name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
+				<exclude name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
+				<exclude name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
 			</fileset>
 		</jar>
 
@@ -1086,6 +1111,7 @@
 		<zip destfile="${dist.extensions}/doc-${version}.zip" basedir="${extensions}" includes="doc/**/*" />
 		<zip destfile="${dist.extensions}/smtp-${version}.zip" basedir="${extensions}" includes="smtp/**/*" />
 		<zip destfile="${dist.extensions}/tcp-${version}.zip" basedir="${extensions}" includes="tcp/**/*" />
+		<zip destfile="${dist.extensions}/astmlight-${version}.zip" basedir="${extensions}" includes="astmlight/**/*" />
 		<zip destfile="${dist.extensions}/file-${version}.zip" basedir="${extensions}" includes="file/**/*" />
 		<zip destfile="${dist.extensions}/js-${version}.zip" basedir="${extensions}" includes="js/**/*" />
 		<zip destfile="${dist.extensions}/ws-${version}.zip" basedir="${extensions}" includes="ws/**/*" />
