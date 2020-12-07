@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/connectors/tcp")
+@Path("/connectors/astmlight")
 @Tag(name = "Connector Services")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -38,19 +38,19 @@ public interface TcpConnectorServletInterface extends BaseServletInterface {
     @Path("/_testConnection")
     @Operation(summary = "Tests whether a connection can be successfully established to the destination endpoint.")
     @ApiResponse(content = { @Content(mediaType = MediaType.APPLICATION_XML, examples = {
-            @ExampleObject(name = "connection_test_response_tcp", ref = "../apiexamples/connection_test_response_tcp_xml") }),
+            @ExampleObject(name = "connection_test_response_astmlight", ref = "../apiexamples/connection_test_response_astmlight_xml") }),
             @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
-                    @ExampleObject(name = "connection_test_response_tcp", ref = "../apiexamples/connection_test_response_tcp_json") }) })
-    @MirthOperation(name = "testConnection", display = "Test TCP Connection", type = ExecuteType.ASYNC, auditable = false)
+                    @ExampleObject(name = "connection_test_response_astmlight", ref = "../apiexamples/connection_test_response_astmlight_json") }) })
+    @MirthOperation(name = "testConnection", display = "Test ASTM Light Connection", type = ExecuteType.ASYNC, auditable = false)
     public ConnectionTestResponse testConnection(// @formatter:off
             @Param("channelId") @Parameter(description = "The ID of the channel.", required = true) @QueryParam("channelId") String channelId,
             @Param("channelName") @Parameter(description = "The name of the channel.", required = true) @QueryParam("channelName") String channelName,
             @Param("properties") 
-            @RequestBody(description = "The TCP Sender properties to use.", required = true, content = {
+            @RequestBody(description = "The ASTM Light Sender properties to use.", required = true, content = {
                     @Content(mediaType = MediaType.APPLICATION_XML, examples = {
-                            @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/tcp_dispatcher_properties_xml") }),
+                            @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/astmlight_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
-                            @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/tcp_dispatcher_properties_json") }) })
+                            @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/astmlight_dispatcher_properties_json") }) })
                                                          TcpDispatcherProperties properties) throws ClientException;
     // @formatter:on
 }

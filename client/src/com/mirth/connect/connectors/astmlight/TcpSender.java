@@ -1,8 +1,8 @@
 /*
  * Copyright (c) Mirth Corporation. All rights reserved.
- * 
+ *
  * http://www.mirthcorp.com
- * 
+ *
  * The software in this package is published under the terms of the MPL license a copy of which has
  * been included with this distribution in the LICENSE.txt file.
  */
@@ -45,7 +45,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         this.parent = PlatformUI.MIRTH_FRAME;
         initComponents();
         initLayout();
-        
+
         sendTimeoutField.setDocument(new MirthFieldConstraints(0, false, false, true));
         bufferSizeField.setDocument(new MirthFieldConstraints(0, false, false, true));
         responseTimeoutField.setDocument(new MirthFieldConstraints(0, false, false, true));
@@ -145,7 +145,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
             keepConnectionOpenNoRadio.setSelected(true);
             keepConnectionOpenNoRadioActionPerformed(null);
         }
-        
+
         // This should be done after updating the UI for isOverrideLocalBinding and isKeepConnectionOpen
         // because it will override some of the enabling/disabling of fields that are done for those properties
         if (props.isServerMode()) {
@@ -207,7 +207,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
                 valid = false;
             }
         }
-        
+
         if (!props.isServerMode()) {
 	        if (props.getRemoteAddress().length() <= 3) {
 	            valid = false;
@@ -222,7 +222,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
 	            }
 	        }
         }
-        
+
         if (props.isServerMode() || props.isOverrideLocalBinding()) {
             if (props.getLocalAddress().length() <= 3) {
                 valid = false;
@@ -237,7 +237,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
                 }
             }
         }
-        
+
         if (props.isServerMode() &&
         		(props.getMaxConnections().length() == 0 || NumberUtils.toInt(props.getMaxConnections()) <= 0)) {
         	valid = false;
@@ -245,7 +245,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
                 maxConnectionsField.setBackground(UIConstants.INVALID_COLOR);
             }
         }
-        
+
         if (!props.isServerMode() && props.isKeepConnectionOpen()) {
             if (props.getSendTimeout().length() == 0) {
                 valid = false;
@@ -573,7 +573,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         checkRemoteHostNoRadio.setText("No");
         checkRemoteHostNoRadio.setToolTipText("<html>Select Yes to check if the remote host has closed the connection before each message.<br>Select No to assume the remote host has not closed the connection.<br>Checking the remote host will decrease throughput but will prevent the message from<br>erroring if the remote side closed the connection and queueing is disabled.</html>");
         checkRemoteHostNoRadio.setMargin(new Insets(0, 0, 0, 0));
-        
+
         modeLabel = new JLabel("Mode:");
         ButtonGroup modeButtonGroup = new ButtonGroup();
 
@@ -599,22 +599,22 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
             }
         });
         modeButtonGroup.add(modeClientRadio);
-        
+
         maxConnectionsLabel = new JLabel("Max Connections:");
         maxConnectionsField = new MirthTextField();
         maxConnectionsField.setToolTipText("<html>The maximum number of client connections to accept.<br/>After this number has been reached, subsequent socket requests will result in a rejection.</html>");
     }
     // @formatter:on
-    
+
     private void initLayout() {
     	setLayout(new MigLayout("insets 0, novisualpadding, hidemode 3, gap 12 6", "", "[][]4[]4[][]4[]4[][][][]4[]4[]4[]4[]4[][]"));
-    	
+
     	add(transmissionModeLabel, "right");
         add(transmissionModeComboBox, "h 22!, split 2");
-        
+
         settingsPlaceHolder.setLayout(new MigLayout("insets 0, novisualpadding, hidemode 3, fill"));
         add(settingsPlaceHolder, "gapbefore 6, h 22!");
-        
+
         add(sampleLabel, "newline, right");
         add(sampleValue, "growx, sx");
         add(modeLabel, "newline, right");
@@ -698,7 +698,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
             // Should not happen
         }
     }
-    
+
     private void updateKeepConnectionOpenUI() {
     	if (keepConnectionOpenYesRadio.isSelected()) {
     		keepConnectionOpenYesRadioActionPerformed(null);
@@ -754,7 +754,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
             settingsPlaceHolder.add(transmissionModeProvider.getSettingsComponent());
         }
     }
-    
+
     private void modeClientRadioActionPerformed() {
         remoteAddressLabel.setEnabled(true);
         remoteAddressField.setEnabled(true);
@@ -767,15 +767,15 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         keepConnectionOpenLabel.setEnabled(true);
         keepConnectionOpenYesRadio.setEnabled(true);
         keepConnectionOpenNoRadio.setEnabled(true);
-        
+
         updateOverrideLocalBindingUI();
         updateKeepConnectionOpenUI();
-        
+
         maxConnectionsLabel.setEnabled(false);
         maxConnectionsField.setEnabled(false);
     }
 
-    private void modeServerRadioActionPerformed() {    	
+    private void modeServerRadioActionPerformed() {
         remoteAddressLabel.setEnabled(false);
         remoteAddressField.setEnabled(false);
         remotePortLabel.setEnabled(false);
@@ -792,7 +792,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         checkRemoteHostNoRadio.setEnabled(false);
         sendTimeoutLabel.setEnabled(false);
         sendTimeoutField.setEnabled(false);
-        
+
         localAddressLabel.setEnabled(true);
         localAddressField.setEnabled(true);
         localPortLabel.setEnabled(true);
@@ -800,7 +800,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         maxConnectionsLabel.setEnabled(true);
         maxConnectionsField.setEnabled(true);
     }
-    
+
     private void updateOverrideLocalBindingUI() {
     	if (overrideLocalBindingYesRadio.isSelected()) {
     		overrideLocalBindingYesRadioActionPerformed(null);

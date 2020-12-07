@@ -25,6 +25,7 @@
 		<property name="connectors.doc" value="${extensions}/doc" />
 		<property name="connectors.smtp" value="${extensions}/smtp" />
 		<property name="connectors.tcp" value="${extensions}/tcp" />
+		<property name="connectors.astmlight" value="${extensions}/astmlight" />
 		<property name="connectors.file" value="${extensions}/file" />
 		<property name="connectors.js" value="${extensions}/js" />
 		<property name="connectors.ws" value="${extensions}/ws" />
@@ -146,6 +147,11 @@
 		<mkdir dir="${connectors.tcp}" />
 		<jar destfile="${connectors.tcp}/tcp-client.jar" basedir="${classes}">
 			<include name="com/mirth/connect/connectors/tcp/**" />
+		</jar>
+
+		<mkdir dir="${connectors.astmlight}" />
+		<jar destfile="${connectors.astmlight}/astmlight-client.jar" basedir="${classes}">
+			<include name="com/mirth/connect/connectors/astmlight/**" />
 		</jar>
 
 		<mkdir dir="${connectors.file}" />

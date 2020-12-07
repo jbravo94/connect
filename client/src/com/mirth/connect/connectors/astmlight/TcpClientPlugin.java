@@ -26,7 +26,7 @@ public class TcpClientPlugin extends ClientPlugin {
 
     @Override
     public String getPluginPointName() {
-        return "TCP Client Plugin";
+        return "ASTM Client Plugin";
     }
 
     @Override

@@ -11,8 +11,8 @@
 	<library type="CLIENT" path="astmlight-client.jar" />
 	<library type="SHARED" path="astmlight-shared.jar" />
 	<library type="SERVER" path="astmlight-server.jar" />
-	<apiProvider type="SERVLET_INTERFACE" name="com.mirth.connect.connectors.tcp.TcpConnectorServletInterface"/>
-	<apiProvider type="SERVER_CLASS" name="com.mirth.connect.connectors.tcp.TcpConnectorServlet"/>
+	<apiProvider type="SERVLET_INTERFACE" name="com.mirth.connect.connectors.astmlight.TcpConnectorServletInterface"/>
+	<apiProvider type="SERVER_CLASS" name="com.mirth.connect.connectors.astmlight.TcpConnectorServlet"/>
 	<transformers/>
 	<protocol>astm</protocol>
 	<type>DESTINATION</type>

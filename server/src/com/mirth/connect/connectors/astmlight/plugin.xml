@@ -6,10 +6,10 @@
 	<url>http://www.nextgen.com</url>
 	<description>This plugin is required for correct use of the TCP connectors for basic ASTM message handling.</description>
 	<serverClasses>
-		<string>com.mirth.connect.connectors.tcp.TcpServicePlugin</string>
+		<string>com.mirth.connect.connectors.astmlight.TcpServicePlugin</string>
 	</serverClasses>
 	<clientClasses>
-		<string>com.mirth.connect.connectors.tcp.TcpClientPlugin</string>
+		<string>com.mirth.connect.connectors.astmlight.TcpClientPlugin</string>
 	</clientClasses>
 	<library type="CLIENT" path="astmlight-client.jar" />
 	<library type="SERVER" path="astmlight-server.jar" />
