@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<project name="custom-extensions" basedir="." default="build">
+    <property name="keystore_property_file" value="keystore.properties" />
+    <property name="manifest_thread_count" value="4" />
+    <property name="signjar_thread_count" value="4" />
+    <property name="jdk_src_path" value="" />
+
+    <target name="init">
+        <property file="mirth-build.properties" />
+        <property name="custom.donkey.setup" value="${donkey}/setup" />
+        <property name="custom.server.setup" value="${server}/setup" />
+        <property name="custom.server.build" value="${server}/build" />
+        <property name="custom.setup" value="${basedir}/setup" />
+        <property name="custom.setup.extensions" value="${custom.setup}/extensions" />
+        <property name="custom.extensions" value="${basedir}/build/extensions" />
+        <property name="custom.dist.extensions" value="${basedir}/dist/extensions" />
+        <path id="custom.classpath">
+            <fileset dir="${basedir}/lib" includes="**/*.jar" />
+        </path>
+    </target>
+
+    <target name="build-donkey" depends="init">
+        <ant antfile="${donkey}/build.xml" dir="${donkey}" target="build" />
+
+        <delete dir="${server}/lib/donkey" />
+        <copy file="${custom.donkey.setup}/donkey-model.jar" todir="${server}/lib/donkey" />
+        <copy file="${custom.donkey.setup}/donkey-server.jar" todir="${server}/lib/donkey" />
+        <copy todir="${server}/lib/donkey">
+            <fileset dir="${donkey}/lib">
+                <exclude name="log4j-1.2.16.jar" />
+                <exclude name="HikariCP-java6-2.0.1.jar" />
+                <exclude name="javassist-3.19.0-GA.jar" />
+                <exclude name="xstream/**" />
+                <exclude name="commons/**" />
+                <exclude name="database/**" />
+            </fileset>
+        </copy>
+    </target>
+
+
+    <!-- Server extensions -->
+    <target name="build-server" depends="build-donkey">
+        <ant antfile="${server}/build.xml" dir="${server}" target="compile">
+            <property name="version" value="${version}" />
+        </ant>
+    </target>
+
+    <!-- Server extensions -->
+    <target name="build-server-extensions" depends="build-server">
+
+        <ant antfile="${basedir}/build-astm-light-extension.xml" dir="${basedir}">
+            <property name="version" value="${version}" />
+        </ant>
+
+        <!-- copy the shared extension jars to the client lib -->
+        <copy todir="${client}/lib" flatten="true">
+            <fileset dir="${custom.server.build}/extensions/">
+                <include name="**/*-shared.jar" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Client -->
+    <target name="build-client" depends="build-server-extensions">
+        <copy file="${custom.donkey.setup}/donkey-model.jar" todir="${client}/lib" />
+        <copy file="${custom.server.setup}/server-lib/mirth-client-core.jar" todir="${client}/lib" />
+        <copy file="${server}/lib/mirth-vocab.jar" todir="${client}/lib" />
+
+        <ant antfile="${client}/ant-build.xml" dir="${client}" target="compile">
+            <property name="version" value="${version}" />
+        </ant>
+
+    </target>
+
+    <!-- Client Extensions -->
+    <target name="build-client-extensions" depends="build-client">
+        <ant antfile="${client}/build-client-astm-light-extension.xml" dir="${client}" target="build">
+            <property name="version" value="${version}" />
+        </ant>
+
+        <copy todir="${custom.server.setup}/extensions">
+            <fileset dir="${client}/dist/extensions" />
+        </copy>
+    </target>
+
+    <target name="create-setup" depends="build-client-extensions">
+        <echo>Sub-project files have been copied into setup</echo>
+
+        <!-- create the setup directory -->
+        <mkdir dir="${custom.setup.extensions}" />
+
+        <!-- copy extensions files -->
+        <copy todir="${custom.setup.extensions}">
+            <fileset dir="${custom.extensions}" />
+        </copy>
+
+        <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="custom.classpath" />
+
+        <!-- modify jar manifests -->
+        <!-- don't modify bcprov, since it already has the manifest changes and is signed by BC -->
+        <echo message="[Thread Count: ${manifest_thread_count}] Modifying jar manifests to add Permissions: all-permissions; Codebase: *; Application-Name: Mirth Connect" />
+        <for param="jarFile" parallel="true" threadCount="${manifest_thread_count}">
+            <fileset dir="${custom.setup.extensions}" includes="**/*.jar" />
+            <sequential>
+                <apply executable="jar">
+                    <arg value="umf" />
+                    <arg line="custom_manifest.mf" />
+                    <srcfile />
+                    <fileset file="@{jarFile}"/>
+                </apply>
+            </sequential>
+        </for>
+
+        <!-- sign jars for webstart -->
+        <echo message="[Thread Count: ${signjar_thread_count}] Signing jars for Java Web Start" />
+        <property file="${keystore_property_file}" />
+
+        <for param="jarFile" parallel="true" threadCount="${signjar_thread_count}">
+            <fileset dir="${custom.setup.extensions}" includes="**/*.jar" />
+            <sequential>
+                <retry retrycount="5" retrydelay="1000">
+                    <signjar jar="@{jarFile}" alias="${key.alias}" keystore="${key.keystore}" storepass="${key.storepass}" keypass="${key.keypass}" storetype="${key.storetype}" tsaurl="http://sha256timestamp.ws.symantec.com/sha256/timestamp" digestalg="SHA-256">
+                        <!-- http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7127374 -->
+                        <sysproperty key="jsse.enableSNIExtension" value="false" />
+                        <sysproperty key="https.protocols" value="TLSv1.2,TLSv1.1" />
+                    </signjar>
+                </retry>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="create-extension-zips" depends="create-setup">
+        <delete dir="${custom.dist.extensions}" />
+        <mkdir dir="${custom.dist.extensions}" />
+
+        <zip destfile="${custom.dist.extensions}/astmlight-${version}.zip" basedir="${custom.setup.extensions}" includes="astmlight/**/*" />
+
+    </target>
+
+    <target name="build" depends="create-extension-zips">
+    </target>
+
+</project>

@@ -5,9 +5,9 @@
 	<mirthVersion>3.9.0</mirthVersion>
 	<url>http://www.nextgen.com</url>
 	<description>This connector allows Mirth Connect to send ASTM messages to a TCP server with basic message handling.</description>
-	<clientClassName>com.mirth.connect.connectors.tcp.TcpSender</clientClassName>
-	<serverClassName>com.mirth.connect.connectors.tcp.TcpDispatcher</serverClassName>
-	<sharedClassName>com.mirth.connect.connectors.tcp.TcpDispatcherProperties</sharedClassName>
+	<clientClassName>com.mirth.connect.connectors.astmlight.TcpSender</clientClassName>
+	<serverClassName>com.mirth.connect.connectors.astmlight.TcpDispatcher</serverClassName>
+	<sharedClassName>com.mirth.connect.connectors.astmlight.TcpDispatcherProperties</sharedClassName>
 	<library type="CLIENT" path="astmlight-client.jar" />
 	<library type="SHARED" path="astmlight-shared.jar" />
 	<library type="SERVER" path="astmlight-server.jar" />

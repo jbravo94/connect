@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<project name="build-astm-light-extension" basedir="." default="build">
+
+    <target name="init">
+        <property file="build.properties" />
+
+        <path id="classpath">
+            <fileset dir="${lib}" includes="**/*.jar" />
+        </path>
+
+        <!-- connectors -->
+        <property name="connectors.astmlight" value="${extensions}/astmlight" />
+
+    </target>
+
+    <target name="create-client-core" depends="init">
+        <jar destfile="${setup.server.lib}/${client-core.jar}" basedir="${classes}">
+            <include name="com/mirth/connect/client/core/**" />
+            <include name="com/mirth/connect/model/**" />
+            <include name="com/mirth/connect/userutil/**" />
+            <include name="com/mirth/connect/util/**" />
+            <include name="com/mirth/connect/server/util/ResourceUtil.class" />
+            <include name="org/mozilla/**" />
+            <include name="org/glassfish/jersey/**" />
+            <include name="de/**" />
+            <include name="net/lingala/zip4j/unzip/**" />
+
+            <include name="version.properties" />
+        </jar>
+
+        <copy file="${lib}/mirth-crypto.jar" todir="${setup.server.lib}" />
+    </target>
+
+    <target name="create-connectors" depends="create-client-core">
+
+        <!-- connectors.astmlight -->
+        <mkdir dir="${connectors.astmlight}" />
+        <copy todir="${connectors.astmlight}">
+            <fileset dir="${src}/com/mirth/connect/connectors/astmlight">
+                <include name="*.xml" />
+            </fileset>
+        </copy>
+        <copy todir="${connectors.astmlight}/lib" failonerror="false">
+            <fileset dir="${lib.extensions}/astmlight" />
+        </copy>
+        <jar destfile="${connectors.astmlight}/astmlight-shared.jar" basedir="${classes}">
+            <include name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
+            <include name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
+            <include name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
+        </jar>
+        <jar destfile="${connectors.astmlight}/astmlight-server.jar">
+            <fileset dir="${classes}">
+                <include name="com/mirth/connect/connectors/astmlight/**" />
+                <exclude name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
+                <exclude name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
+                <exclude name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
+            </fileset>
+        </jar>
+
+        <!-- set the version on all connectors -->
+        <replace dir="${extensions}" token="@mirthversion" value="${version}">
+            <include name="**/*.xml" />
+        </replace>
+    </target>
+
+    <target name="create-plugins" depends="create-connectors">
+    </target>
+
+    <target name="build" depends="create-plugins">
+    </target>
+
+</project>

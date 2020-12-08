@@ -41,7 +41,7 @@
 		<property name="plugins.datatype-xml" value="${extensions}/datatype-xml" />
 		<property name="plugins.datatype-raw" value="${extensions}/datatype-raw" />
 		<property name="plugins.datatype-json" value="${extensions}/datatype-json" />
-		
+
 		<!-- plugins -->
 		<property name="plugins.directoryresource" value="${extensions}/directoryresource" />
 		<property name="plugins.dashboardstatus" value="${extensions}/dashboardstatus" />
@@ -82,12 +82,11 @@
 
 		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
 			<classpath refid="classpath" />
-			<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+
-				<compilerarg value="-add-modules" />
-				<compilerarg value="java.sql.rowset,java.xml.ws" />
-				<compilerarg value="-add-exports" />
+			<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+ -->
+				<compilerarg value="--add-exports" />
 				<compilerarg value="java.sql.rowset/com.sun.rowset=ALL-UNNAMED" />
-			-->
+				<compilerarg value="--add-modules" />
+				<compilerarg value="java.sql.rowset" />
 		</javac>
 
 		<!-- create version.properties file -->
