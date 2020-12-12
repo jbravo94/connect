@@ -1,0 +1,1 @@
+java -jar mirth-client-launcher.jar --allow-self-signed --allow-incorrect-digest

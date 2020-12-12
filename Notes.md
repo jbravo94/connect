@@ -11,3 +11,6 @@
 
 # Misc
 * The protocol type is set in property files and needed for lookup.
+
+# Todo
+* Fix build process for single extension
