@@ -40,7 +40,7 @@ import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.server.controllers.EventController;
 import com.mirth.connect.server.controllers.ExtensionController;
 
-public class TcpDispatcherTest {
+public class AstmLightDispatcherTest {
 	private static final String TEST_CHANNEL_ID = UUID.randomUUID().toString();
 	private static final String TEST_SERVER_ID = UUID.randomUUID().toString();
 	private static final String TEST_CHANNEL_NAME = "Test TCP Sender Channel";

@@ -45,17 +45,17 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TcpDispatcher extends DestinationConnector {
+public class AstmLightDispatcher extends DestinationConnector {
     // This determines how many client requests can queue up while waiting for the server socket to accept
     private static final int DEFAULT_BACKLOG = 256;
 
     private Logger logger = Logger.getLogger(this.getClass());
-    protected TcpDispatcherProperties connectorProperties;
+    protected AstmLightDispatcherProperties connectorProperties;
     private ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
     private EventController eventController = ControllerFactory.getFactory().createEventController();
     private TemplateValueReplacer replacer = new TemplateValueReplacer();
 
-    private TcpConfiguration configuration = null;
+    private AstmLightConfiguration configuration = null;
     private Map<String, Socket> connectedSockets;
     private Map<String, Thread> timeoutThreads;
 
@@ -73,7 +73,7 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
     public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
-        TcpDispatcherProperties tcpSenderProperties = (TcpDispatcherProperties) connectorProperties;
+        AstmLightDispatcherProperties tcpSenderProperties = (AstmLightDispatcherProperties) connectorProperties;
 
         tcpSenderProperties.setRemoteAddress(replacer.replaceValues(tcpSenderProperties.getRemoteAddress(), connectorMessage));
         tcpSenderProperties.setRemotePort(replacer.replaceValues(tcpSenderProperties.getRemotePort(), connectorMessage));
@@ -84,7 +84,7 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
-        connectorProperties = (TcpDispatcherProperties) getConnectorProperties();
+        connectorProperties = (AstmLightDispatcherProperties) getConnectorProperties();
 
         String pluginPointName = (String) connectorProperties.getTransmissionModeProperties().getPluginPointName();
         if (pluginPointName.equals("Basic")) {
@@ -101,10 +101,10 @@ public class TcpDispatcher extends DestinationConnector {
         String configurationClass = getConfigurationClass();
 
         try {
-            configuration = (TcpConfiguration) Class.forName(configurationClass).newInstance();
+            configuration = (AstmLightConfiguration) Class.forName(configurationClass).newInstance();
         } catch (Throwable t) {
             logger.trace("could not find custom configuration class, using default");
-            configuration = new DefaultTcpConfiguration();
+            configuration = new DefaultAstmLightConfiguration();
         }
 
         try {
@@ -305,7 +305,7 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
     public Response send(ConnectorProperties connectorProperties, ConnectorMessage message) {
-        TcpDispatcherProperties tcpDispatcherProperties = (TcpDispatcherProperties) connectorProperties;
+        AstmLightDispatcherProperties astmLightDispatcherProperties = (AstmLightDispatcherProperties) connectorProperties;
         Status responseStatus = Status.QUEUED;
         String responseData = null;
         String responseStatusMessage = null;
@@ -314,9 +314,9 @@ public class TcpDispatcher extends DestinationConnector {
 
         long dispatcherId = message.getDispatcherId();
 
-        String socketKey = dispatcherId + tcpDispatcherProperties.getRemoteAddress() + tcpDispatcherProperties.getRemotePort();
-        if (tcpDispatcherProperties.isOverrideLocalBinding()) {
-            socketKey += tcpDispatcherProperties.getLocalAddress() + tcpDispatcherProperties.getLocalPort();
+        String socketKey = dispatcherId + astmLightDispatcherProperties.getRemoteAddress() + astmLightDispatcherProperties.getRemotePort();
+        if (astmLightDispatcherProperties.isOverrideLocalBinding()) {
+            socketKey += astmLightDispatcherProperties.getLocalAddress() + astmLightDispatcherProperties.getLocalPort();
         }
 
         Socket socket = null;
@@ -324,11 +324,11 @@ public class TcpDispatcher extends DestinationConnector {
         Response response = null;
 
         try {
-            if (!tcpDispatcherProperties.isServerMode()) {
+            if (!astmLightDispatcherProperties.isServerMode()) {
                 // Do some validation first to avoid unnecessarily creating sockets
-                if (StringUtils.isBlank(tcpDispatcherProperties.getRemoteAddress())) {
+                if (StringUtils.isBlank(astmLightDispatcherProperties.getRemoteAddress())) {
                     throw new Exception("Remote address is blank.");
-                } else if (NumberUtils.toInt(tcpDispatcherProperties.getRemotePort()) <= 0) {
+                } else if (NumberUtils.toInt(astmLightDispatcherProperties.getRemotePort()) <= 0) {
                     throw new Exception("Remote port is invalid.");
                 }
 
@@ -336,20 +336,20 @@ public class TcpDispatcher extends DestinationConnector {
                 timeoutThread = timeoutThreads.get(socketKey);
 
                 // If keep connection open is true, then interrupt the thread so it won't close the socket
-                if (tcpDispatcherProperties.isKeepConnectionOpen() && timeoutThread != null) {
+                if (astmLightDispatcherProperties.isKeepConnectionOpen() && timeoutThread != null) {
                     disposeThreadQuietly(socketKey);
                 }
 
                 // Initialize a new socket if our current one is invalid, the remote side has closed, or keep connection open is false
-                if (!tcpDispatcherProperties.isKeepConnectionOpen() || socket == null || socket.isClosed() || (tcpDispatcherProperties.isCheckRemoteHost() && socket instanceof StateAwareSocketInterface && ((StateAwareSocketInterface) socket).remoteSideHasClosed())) {
+                if (!astmLightDispatcherProperties.isKeepConnectionOpen() || socket == null || socket.isClosed() || (astmLightDispatcherProperties.isCheckRemoteHost() && socket instanceof StateAwareSocketInterface && ((StateAwareSocketInterface) socket).remoteSideHasClosed())) {
                     closeSocketQuietly(socketKey);
 
                     logger.debug("Creating new socket (" + connectorProperties.getName() + " \"" + getDestinationName() + "\" on channel " + getChannelId() + ").");
-                    String info = "Trying to connect on " + tcpDispatcherProperties.getRemoteAddress() + ":" + tcpDispatcherProperties.getRemotePort() + "...";
+                    String info = "Trying to connect on " + astmLightDispatcherProperties.getRemoteAddress() + ":" + astmLightDispatcherProperties.getRemotePort() + "...";
                     eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.CONNECTING, info));
 
-                    if (tcpDispatcherProperties.isOverrideLocalBinding()) {
-                        socket = SocketUtil.createSocket(configuration, tcpDispatcherProperties.getLocalAddress(), NumberUtils.toInt(tcpDispatcherProperties.getLocalPort()));
+                    if (astmLightDispatcherProperties.isOverrideLocalBinding()) {
+                        socket = SocketUtil.createSocket(configuration, astmLightDispatcherProperties.getLocalAddress(), NumberUtils.toInt(astmLightDispatcherProperties.getLocalPort()));
                     } else {
                         socket = SocketUtil.createSocket(configuration);
                     }
@@ -357,13 +357,13 @@ public class TcpDispatcher extends DestinationConnector {
                     ThreadUtils.checkInterruptedStatus();
                     connectedSockets.put(socketKey, socket);
 
-                    SocketUtil.connectSocket(socket, tcpDispatcherProperties.getRemoteAddress(), NumberUtils.toInt(tcpDispatcherProperties.getRemotePort()), responseTimeout);
+                    SocketUtil.connectSocket(socket, astmLightDispatcherProperties.getRemoteAddress(), NumberUtils.toInt(astmLightDispatcherProperties.getRemotePort()), responseTimeout);
 
                     socket.setReuseAddress(true);
                     socket.setReceiveBufferSize(bufferSize);
                     socket.setSendBufferSize(bufferSize);
                     socket.setSoTimeout(responseTimeout);
-                    socket.setKeepAlive(tcpDispatcherProperties.isKeepConnectionOpen());
+                    socket.setKeepAlive(astmLightDispatcherProperties.isKeepConnectionOpen());
 
                     eventController.dispatchEvent(new ConnectorCountEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.CONNECTED, SocketUtil.getLocalAddress(socket) + " -> " + SocketUtil.getInetAddress(socket), true));
                 }
@@ -371,7 +371,7 @@ public class TcpDispatcher extends DestinationConnector {
 
             ThreadUtils.checkInterruptedStatus();
 
-            if (tcpDispatcherProperties.isServerMode()) {
+            if (astmLightDispatcherProperties.isServerMode()) {
                 synchronized (serverModeSockets) {
                     List<Response> responseList = new ArrayList<>();
                     int successes = 0;
@@ -387,7 +387,7 @@ public class TcpDispatcher extends DestinationConnector {
                         }
 
                         if (!serverModeSocket.isClosed()) {
-                            Response currentResponse = send(tcpDispatcherProperties, message, serverModeSocket, socketKey);
+                            Response currentResponse = send(astmLightDispatcherProperties, message, serverModeSocket, socketKey);
 
                             responseList.add(currentResponse);
 
@@ -440,14 +440,14 @@ public class TcpDispatcher extends DestinationConnector {
                     }
                 }
             } else {
-                response = send(tcpDispatcherProperties, message, socket, socketKey);
+                response = send(astmLightDispatcherProperties, message, socket, socketKey);
             }
 
             return response;
         } catch (Throwable t) {
             String monitorMessage = "Error sending message: " + t.getMessage();
 
-            if (!tcpDispatcherProperties.isServerMode()) {
+            if (!astmLightDispatcherProperties.isServerMode()) {
                 disposeThreadQuietly(socketKey);
                 closeSocketQuietly(socketKey);
                 monitorMessage = "Error sending message (" + SocketUtil.getLocalAddress(socket) + " -> " + SocketUtil.getInetAddress(socket) + "): " + t.getMessage();
@@ -493,7 +493,7 @@ public class TcpDispatcher extends DestinationConnector {
         return responseString;
     }
 
-    private Response send(TcpDispatcherProperties tcpDispatcherProperties, ConnectorMessage message, Socket socket, String socketKey) {
+    private Response send(AstmLightDispatcherProperties astmLightDispatcherProperties, ConnectorMessage message, Socket socket, String socketKey) {
         Status responseStatus = Status.QUEUED;
         String responseData = null;
         String responseStatusMessage = null;
@@ -505,20 +505,20 @@ public class TcpDispatcher extends DestinationConnector {
             eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.SENDING, SocketUtil.getLocalAddress(socket) + " -> " + SocketUtil.getInetAddress(socket)));
             BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream(), bufferSize);
             BatchStreamReader batchStreamReader = new DefaultBatchStreamReader(socket.getInputStream());
-            StreamHandler streamHandler = transmissionModeProvider.getStreamHandler(socket.getInputStream(), bos, batchStreamReader, tcpDispatcherProperties.getTransmissionModeProperties());
-            streamHandler.write(getTemplateBytes(tcpDispatcherProperties, message));
+            StreamHandler streamHandler = transmissionModeProvider.getStreamHandler(socket.getInputStream(), bos, batchStreamReader, astmLightDispatcherProperties.getTransmissionModeProperties());
+            streamHandler.write(getTemplateBytes(astmLightDispatcherProperties, message));
             bos.flush();
 
-            if (!tcpDispatcherProperties.isIgnoreResponse()) {
+            if (!astmLightDispatcherProperties.isIgnoreResponse()) {
                 ThreadUtils.checkInterruptedStatus();
 
                 // Attempt to get the response from the remote endpoint
                 try {
-                    String info = "Waiting for response from " + SocketUtil.getInetAddress(socket) + " (Timeout: " + tcpDispatcherProperties.getResponseTimeout() + " ms)... ";
+                    String info = "Waiting for response from " + SocketUtil.getInetAddress(socket) + " (Timeout: " + astmLightDispatcherProperties.getResponseTimeout() + " ms)... ";
                     eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.WAITING_FOR_RESPONSE, info));
                     byte[] responseBytes = streamHandler.read();
                     if (responseBytes != null) {
-                        responseData = new String(responseBytes, CharsetUtils.getEncoding(tcpDispatcherProperties.getCharsetEncoding()));
+                        responseData = new String(responseBytes, CharsetUtils.getEncoding(astmLightDispatcherProperties.getCharsetEncoding()));
                         responseStatusMessage = "Message successfully sent.";
                     } else {
                         responseStatusMessage = "Message successfully sent, but no response received.";
@@ -528,13 +528,13 @@ public class TcpDispatcher extends DestinationConnector {
                     responseStatus = Status.SENT;
 
                     // We only want to validate the response if we were able to retrieve it successfully
-                    validateResponse = tcpDispatcherProperties.getDestinationConnectorProperties().isValidateResponse();
+                    validateResponse = astmLightDispatcherProperties.getDestinationConnectorProperties().isValidateResponse();
                 } catch (IOException e) {
                     // An exception occurred while retrieving the response
                     if (e instanceof SocketTimeoutException || e.getCause() != null && e.getCause() instanceof SocketTimeoutException) {
                         responseStatusMessage = "Timeout waiting for response";
 
-                        if (!tcpDispatcherProperties.isQueueOnResponseTimeout()) {
+                        if (!astmLightDispatcherProperties.isQueueOnResponseTimeout()) {
                             responseStatus = Status.ERROR;
                         }
                     } else {
@@ -546,7 +546,7 @@ public class TcpDispatcher extends DestinationConnector {
                     eventController.dispatchEvent(new ErrorEvent(getChannelId(), getMetaDataId(), message.getMessageId(), ErrorEventType.DESTINATION_CONNECTOR, getDestinationName(), connectorProperties.getName(), responseStatusMessage + ".", e));
                     eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.FAILURE, responseStatusMessage + " from " + SocketUtil.getInetAddress(socket)));
 
-                    if (tcpDispatcherProperties.isServerMode()) {
+                    if (astmLightDispatcherProperties.isServerMode()) {
                         closeServerModeSocketQuietly(socket);
                     } else {
                         closeSocketQuietly(socketKey);
@@ -565,8 +565,8 @@ public class TcpDispatcher extends DestinationConnector {
                 responseStatusMessage = "Message successfully sent.";
             }
 
-            if (!tcpDispatcherProperties.isServerMode()) {
-                if (tcpDispatcherProperties.isKeepConnectionOpen() && (getCurrentState() == DeployedState.STARTED || getCurrentState() == DeployedState.STARTING)) {
+            if (!astmLightDispatcherProperties.isServerMode()) {
+                if (astmLightDispatcherProperties.isKeepConnectionOpen() && (getCurrentState() == DeployedState.STARTED || getCurrentState() == DeployedState.STARTING)) {
                     if (sendTimeout > 0) {
                         // Close the connection after the send timeout has been reached
                         startThread(socketKey);
@@ -577,7 +577,7 @@ public class TcpDispatcher extends DestinationConnector {
                 }
             }
         } catch (Throwable t) {
-            if (tcpDispatcherProperties.isServerMode()) {
+            if (astmLightDispatcherProperties.isServerMode()) {
                 closeServerModeSocketQuietly(socket);
             } else {
                 disposeThreadQuietly(socketKey);
@@ -613,7 +613,7 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
     protected String getConfigurationClass() {
-        return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
+        return configurationController.getProperty(connectorProperties.getProtocol(), "astmLightConfigurationClass");
     }
 
     private void closeSocketQuietly(String socketKey) {
@@ -731,7 +731,7 @@ public class TcpDispatcher extends DestinationConnector {
      * Returns the byte array representation of the connector properties template, using the
      * properties to determine whether or not to encode in Base64, and what charset to use.
      */
-    private byte[] getTemplateBytes(TcpDispatcherProperties tcpSenderProperties, ConnectorMessage connectorMessage) throws UnsupportedEncodingException {
+    private byte[] getTemplateBytes(AstmLightDispatcherProperties tcpSenderProperties, ConnectorMessage connectorMessage) throws UnsupportedEncodingException {
         byte[] bytes = new byte[0];
 
         if (tcpSenderProperties.getTemplate() != null) {

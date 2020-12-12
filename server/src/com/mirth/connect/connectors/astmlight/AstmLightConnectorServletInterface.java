@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 @Tag(name = "Connector Services")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public interface TcpConnectorServletInterface extends BaseServletInterface {
+public interface AstmLightConnectorServletInterface extends BaseServletInterface {
 
     public static final String PLUGIN_POINT = "HTTP Connector Service";
 
@@ -51,6 +51,6 @@ public interface TcpConnectorServletInterface extends BaseServletInterface {
                             @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/astmlight_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/astmlight_dispatcher_properties_json") }) })
-                                                         TcpDispatcherProperties properties) throws ClientException;
+                                                         AstmLightDispatcherProperties properties) throws ClientException;
     // @formatter:on
 }

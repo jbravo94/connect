@@ -18,11 +18,11 @@ import com.thoughtworks.xstream.XStream;
 import java.util.Map;
 import java.util.Properties;
 
-public class TcpServicePlugin implements ServicePlugin {
+public class AstmLightServicePlugin implements ServicePlugin {
 
     @Override
     public String getPluginPointName() {
-        return "TCP Service Plugin";
+        return "ASTM Light Service Plugin";
     }
 
     @Override
@@ -35,7 +35,7 @@ public class TcpServicePlugin implements ServicePlugin {
     public void init(Properties properties) {
         ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
         XStream xstream = serializer.getXStream();
-        xstream.registerLocalConverter(TcpReceiverProperties.class, "responseConnectorPluginProperties", new PluginPropertiesConverter(serializer.getNormalizedVersion(), xstream.getMapper()));
+        xstream.registerLocalConverter(AstmLightReceiverProperties.class, "responseConnectorPluginProperties", new PluginPropertiesConverter(serializer.getNormalizedVersion(), xstream.getMapper()));
     }
 
     @Override

@@ -380,16 +380,16 @@
 			<fileset dir="${lib.extensions}/astmlight" />
 		</copy>
 		<jar destfile="${connectors.astmlight}/astmlight-shared.jar" basedir="${classes}">
-			<include name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
-			<include name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
-			<include name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
+			<include name="com/mirth/connect/connectors/astmlight/AstmLightReceiverProperties.class" />
+			<include name="com/mirth/connect/connectors/astmlight/AstmLightDispatcherProperties.class" />
+			<include name="com/mirth/connect/connectors/astmlight/AstmLightConnectorServletInterface.class" />
 		</jar>
 		<jar destfile="${connectors.astmlight}/astmlight-server.jar">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/astmlight/**" />
-				<exclude name="com/mirth/connect/connectors/astmlight/TcpReceiverProperties.class" />
-				<exclude name="com/mirth/connect/connectors/astmlight/TcpDispatcherProperties.class" />
-				<exclude name="com/mirth/connect/connectors/astmlight/TcpConnectorServletInterface.class" />
+				<exclude name="com/mirth/connect/connectors/astmlight/AstmLightReceiverProperties.class" />
+				<exclude name="com/mirth/connect/connectors/astmlight/AstmLightDispatcherProperties.class" />
+				<exclude name="com/mirth/connect/connectors/astmlight/AstmLightConnectorServletInterface.class" />
 			</fileset>
 		</jar>
 

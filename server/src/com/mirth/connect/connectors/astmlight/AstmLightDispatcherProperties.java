@@ -23,12 +23,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public class TcpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class AstmLightDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
-    public static final String PROTOCOL = "TCP";
-    public static final String NAME = "TCP Sender";
+    public static final String PROTOCOL = "ASTMLIGHT";
+    public static final String NAME = "ASTM Light Sender";
 
     private TransmissionModeProperties transmissionModeProperties;
     private boolean serverMode;
@@ -49,7 +49,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
     private String charsetEncoding;
     private String template;
 
-    public TcpDispatcherProperties() {
+    public AstmLightDispatcherProperties() {
         destinationConnectorProperties = new DestinationConnectorProperties(true);
 
         FrameModeProperties frameModeProperties = new FrameModeProperties("MLLP");
@@ -76,7 +76,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.template = "${message.encodedData}";
     }
 
-    public TcpDispatcherProperties(TcpDispatcherProperties props) {
+    public AstmLightDispatcherProperties(AstmLightDispatcherProperties props) {
         super(props);
         destinationConnectorProperties = new DestinationConnectorProperties(props.getDestinationConnectorProperties());
 
@@ -287,7 +287,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
 
     @Override
     public ConnectorProperties clone() {
-        return new TcpDispatcherProperties(this);
+        return new AstmLightDispatcherProperties(this);
     }
 
     @Override

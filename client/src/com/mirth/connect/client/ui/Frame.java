@@ -51,7 +51,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.application.Platform;
+//import javafx.application.Platform;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -69,6 +69,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
+import javafx.application.Platform;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

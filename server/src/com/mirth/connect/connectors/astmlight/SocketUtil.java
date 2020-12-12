@@ -20,11 +20,11 @@ import java.net.UnknownHostException;
 
 public class SocketUtil {
 
-    public static Socket createSocket(TcpConfiguration configuration) throws UnknownHostException, IOException {
+    public static Socket createSocket(AstmLightConfiguration configuration) throws UnknownHostException, IOException {
         return createSocket(configuration, null);
     }
 
-    public static Socket createSocket(TcpConfiguration configuration, String localAddr) throws UnknownHostException, IOException {
+    public static Socket createSocket(AstmLightConfiguration configuration, String localAddr) throws UnknownHostException, IOException {
         return createSocket(configuration, localAddr, 0);
     }
 
@@ -47,7 +47,7 @@ public class SocketUtil {
      * @throws IOException
      *             if an I/O error occurs when creating the socket
      */
-    public static Socket createSocket(TcpConfiguration configuration, String localAddr, int localPort) throws UnknownHostException, IOException {
+    public static Socket createSocket(AstmLightConfiguration configuration, String localAddr, int localPort) throws UnknownHostException, IOException {
         Socket socket = configuration.createSocket();
 
         if (StringUtils.isNotEmpty(localAddr)) {
@@ -58,7 +58,7 @@ public class SocketUtil {
         return socket;
     }
 
-    public static Socket createResponseSocket(TcpConfiguration configuration) throws UnknownHostException, IOException {
+    public static Socket createResponseSocket(AstmLightConfiguration configuration) throws UnknownHostException, IOException {
         return configuration.createResponseSocket();
     }
 

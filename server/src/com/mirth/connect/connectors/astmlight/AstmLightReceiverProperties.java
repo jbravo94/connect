@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("serial")
-public class TcpReceiverProperties extends ConnectorProperties implements ListenerConnectorPropertiesInterface, SourceConnectorPropertiesInterface {
+public class AstmLightReceiverProperties extends ConnectorProperties implements ListenerConnectorPropertiesInterface, SourceConnectorPropertiesInterface {
     private ListenerConnectorProperties listenerConnectorProperties;
     private SourceConnectorProperties sourceConnectorProperties;
 
-    public static final String PROTOCOL = "TCP";
-    public static final String NAME = "TCP Listener";
+    public static final String PROTOCOL = "ASTMLIGHT";
+    public static final String NAME = "ASTM Light Listener";
     public static final int SAME_CONNECTION = 0;
     public static final int NEW_CONNECTION = 1;
     public static final int NEW_CONNECTION_ON_RECOVERY = 2;
@@ -50,7 +50,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
     private String responsePort;
     private Set<ConnectorPluginProperties> responseConnectorPluginProperties;
 
-    public TcpReceiverProperties() {
+    public AstmLightReceiverProperties() {
         listenerConnectorProperties = new ListenerConnectorProperties("6661");
         sourceConnectorProperties = new SourceConnectorProperties(SourceConnectorProperties.RESPONSE_SOURCE_TRANSFORMED);
         sourceConnectorProperties.setFirstResponse(true);

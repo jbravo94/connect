@@ -31,7 +31,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TcpSender extends ConnectorSettingsPanel implements ActionListener {
+public class AstmLightSender extends ConnectorSettingsPanel implements ActionListener {
 
     private Logger logger = Logger.getLogger(this.getClass());
     private Frame parent;
@@ -41,7 +41,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
     private String selectedMode;
     private boolean modeLock = false;
 
-    public TcpSender() {
+    public AstmLightSender() {
         this.parent = PlatformUI.MIRTH_FRAME;
         initComponents();
         initLayout();
@@ -68,12 +68,12 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
 
     @Override
     public String getConnectorName() {
-        return new TcpDispatcherProperties().getName();
+        return new AstmLightDispatcherProperties().getName();
     }
 
     @Override
     public ConnectorProperties getProperties() {
-        TcpDispatcherProperties properties = new TcpDispatcherProperties();
+        AstmLightDispatcherProperties properties = new AstmLightDispatcherProperties();
 
         if (transmissionModeProvider != null) {
             properties.setTransmissionModeProperties((TransmissionModeProperties) transmissionModeProvider.getProperties());
@@ -104,7 +104,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
     @Override
     public void setProperties(ConnectorProperties properties) {
         logger.debug("setProperties: properties=" + properties);
-        TcpDispatcherProperties props = (TcpDispatcherProperties) properties;
+        AstmLightDispatcherProperties props = (AstmLightDispatcherProperties) properties;
 
         TransmissionModeProperties modeProps = props.getTransmissionModeProperties();
         String name = "Basic TCP";
@@ -188,7 +188,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
 
     @Override
     public ConnectorProperties getDefaults() {
-        TcpDispatcherProperties props = new TcpDispatcherProperties();
+        AstmLightDispatcherProperties props = new AstmLightDispatcherProperties();
         if (defaultProvider != null) {
             props.setTransmissionModeProperties(defaultProvider.getDefaultProperties());
         }
@@ -198,7 +198,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
     @Override
     public boolean checkProperties(ConnectorProperties properties, boolean highlight) {
         logger.debug("checkProperties: properties=" + properties);
-        TcpDispatcherProperties props = (TcpDispatcherProperties) properties;
+        AstmLightDispatcherProperties props = (AstmLightDispatcherProperties) properties;
 
         boolean valid = true;
 
@@ -693,7 +693,7 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
         };
 
         try {
-            getServlet(TcpConnectorServletInterface.class, "Testing connection...", "Failed to test connection: ", handler).testConnection(getChannelId(), getChannelName(), (TcpDispatcherProperties) getFilledProperties());
+            getServlet(AstmLightConnectorServletInterface.class, "Testing connection...", "Failed to test connection: ", handler).testConnection(getChannelId(), getChannelName(), (AstmLightDispatcherProperties) getFilledProperties());
         } catch (ClientException e) {
             // Should not happen
         }

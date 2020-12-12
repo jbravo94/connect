@@ -17,7 +17,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 
-public interface TcpConfiguration {
+public interface AstmLightConfiguration {
 
     public void configureConnectorDeploy(Connector connector) throws Exception;
 

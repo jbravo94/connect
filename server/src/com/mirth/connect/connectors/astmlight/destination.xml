@@ -5,15 +5,15 @@
 	<mirthVersion>3.9.0</mirthVersion>
 	<url>http://www.nextgen.com</url>
 	<description>This connector allows Mirth Connect to send ASTM messages to a TCP server with basic message handling.</description>
-	<clientClassName>com.mirth.connect.connectors.astmlight.TcpSender</clientClassName>
-	<serverClassName>com.mirth.connect.connectors.astmlight.TcpDispatcher</serverClassName>
-	<sharedClassName>com.mirth.connect.connectors.astmlight.TcpDispatcherProperties</sharedClassName>
+	<clientClassName>com.mirth.connect.connectors.astmlight.AstmLightSender</clientClassName>
+	<serverClassName>com.mirth.connect.connectors.astmlight.AstmLightDispatcher</serverClassName>
+	<sharedClassName>com.mirth.connect.connectors.astmlight.AstmLightDispatcherProperties</sharedClassName>
 	<library type="CLIENT" path="astmlight-client.jar" />
 	<library type="SHARED" path="astmlight-shared.jar" />
 	<library type="SERVER" path="astmlight-server.jar" />
-	<apiProvider type="SERVLET_INTERFACE" name="com.mirth.connect.connectors.astmlight.TcpConnectorServletInterface"/>
-	<apiProvider type="SERVER_CLASS" name="com.mirth.connect.connectors.astmlight.TcpConnectorServlet"/>
+	<apiProvider type="SERVLET_INTERFACE" name="com.mirth.connect.connectors.astmlight.AstmLightConnectorServletInterface"/>
+	<apiProvider type="SERVER_CLASS" name="com.mirth.connect.connectors.astmlight.AstmLightLightConnectorServlet"/>
 	<transformers/>
-	<protocol>astm</protocol>
+	<protocol>astmlight</protocol>
 	<type>DESTINATION</type>
 </connectorMetaData>

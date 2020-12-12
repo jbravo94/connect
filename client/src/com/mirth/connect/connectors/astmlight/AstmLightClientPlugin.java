@@ -14,14 +14,14 @@ import com.mirth.connect.model.converters.PluginPropertiesConverter;
 import com.mirth.connect.plugins.ClientPlugin;
 import com.thoughtworks.xstream.XStream;
 
-public class TcpClientPlugin extends ClientPlugin {
+public class AstmLightClientPlugin extends ClientPlugin {
 
-    public TcpClientPlugin(String pluginName) {
+    public AstmLightClientPlugin(String pluginName) {
         super(pluginName);
 
         ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
         XStream xstream = serializer.getXStream();
-        xstream.registerLocalConverter(TcpReceiverProperties.class, "responseConnectorPluginProperties", new PluginPropertiesConverter(serializer.getNormalizedVersion(), xstream.getMapper()));
+        xstream.registerLocalConverter(AstmLightReceiverProperties.class, "responseConnectorPluginProperties", new PluginPropertiesConverter(serializer.getNormalizedVersion(), xstream.getMapper()));
     }
 
     @Override

@@ -75,6 +75,10 @@
 		<mkdir dir="${classes}" />
 		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
 			<classpath refid="classpath" />
+			<compilerarg value="--add-exports" />
+			<compilerarg value="java.sql.rowset/com.sun.rowset=ALL-UNNAMED" />
+			<compilerarg value="--add-modules" />
+			<compilerarg value="java.sql.rowset" />
 		</javac>
 
 		<copy todir="${classes}" file="${src}/log4j.properties" />

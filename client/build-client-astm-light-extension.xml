@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project name="build-client-astm-light-extension" basedir="." default="build">
+    <target name="init">
+        <property file="build.properties" />
+
+        <path id="classpath">
+            <fileset dir="${lib}" includes="**/*.jar" />
+            <!-- include the extensions libs in case they have jars required for the client -->
+            <fileset dir="${server}/lib/extensions" includes="**/*.jar" />
+        </path>
+
+        <mkdir dir="${logs}" />
+
+        <property name="extensions" value="${dist}/extensions" />
+        <property name="connectors.astmlight" value="${extensions}/astmlight" />
+
+    </target>
+
+    <target name="build-client-extensions" depends="init">
+        <mkdir dir="${dist}" />
+
+        <jar destfile="${dist}/${client.jar}">
+            <fileset dir="${classes}">
+                <exclude name="com/mirth/connect/connectors/**/**" />
+            </fileset>
+            <fileset dir="${classes}">
+                <include name="com/mirth/connect/connectors/ConnectorClass.class" />
+            </fileset>
+        </jar>
+
+        <mkdir dir="${connectors.astmlight}" />
+        <jar destfile="${connectors.astmlight}/astmlight-client.jar" basedir="${classes}">
+            <include name="com/mirth/connect/connectors/astmlight/**" />
+        </jar>
+
+    </target>
+
+    <target name="build" depends="build-client-extensions">
+    </target>
+</project>

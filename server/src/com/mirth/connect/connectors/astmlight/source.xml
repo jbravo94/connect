@@ -5,13 +5,13 @@
 	<mirthVersion>3.9.0</mirthVersion>
 	<url>http://www.nextgen.com</url>
 	<description>This connector allows Mirth Connect to listen for incoming ASTM messages over a standard TCP connection with basic message handling.</description>
-	<clientClassName>com.mirth.connect.connectors.astmlight.TcpListener</clientClassName>
-	<serverClassName>com.mirth.connect.connectors.astmlight.TcpReceiver</serverClassName>
-	<sharedClassName>com.mirth.connect.connectors.astmlight.TcpReceiverProperties</sharedClassName>
+	<clientClassName>com.mirth.connect.connectors.astmlight.AstmLightListener</clientClassName>
+	<serverClassName>com.mirth.connect.connectors.astmlight.AstmLightReceiver</serverClassName>
+	<sharedClassName>com.mirth.connect.connectors.astmlight.AstmLightReceiverProperties</sharedClassName>
 	<library type="CLIENT" path="astmlight-client.jar" />
 	<library type="SHARED" path="astmlight-shared.jar" />
 	<library type="SERVER" path="astmlight-server.jar" />
 	<transformers/>
-	<protocol>astm</protocol>
+	<protocol>astmlight</protocol>
 	<type>SOURCE</type>
 </connectorMetaData>

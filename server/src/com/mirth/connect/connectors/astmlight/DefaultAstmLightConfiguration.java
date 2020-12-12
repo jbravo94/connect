@@ -18,7 +18,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultTcpConfiguration implements TcpConfiguration {
+public class DefaultAstmLightConfiguration implements AstmLightConfiguration {
 
     @Override
     public void configureConnectorDeploy(Connector connector) throws Exception {}

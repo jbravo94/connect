@@ -50,17 +50,17 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TcpReceiver extends SourceConnector {
+public class AstmLightReceiver extends SourceConnector {
     // This determines how many client requests can queue up while waiting for the server socket to accept
     private static final int DEFAULT_BACKLOG = 256;
 
     private Logger logger = Logger.getLogger(this.getClass());
     private ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
     private EventController eventController = ControllerFactory.getFactory().createEventController();
-    protected TcpReceiverProperties connectorProperties;
+    protected AstmLightReceiverProperties connectorProperties;
     private TemplateValueReplacer replacer = new TemplateValueReplacer();
 
-    private TcpConfiguration configuration = null;
+    private AstmLightConfiguration configuration = null;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private Socket recoveryResponseSocket;
@@ -79,7 +79,7 @@ public class TcpReceiver extends SourceConnector {
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
-        connectorProperties = (TcpReceiverProperties) getConnectorProperties();
+        connectorProperties = (AstmLightReceiverProperties) getConnectorProperties();
 
         if (connectorProperties.isDataTypeBinary() && isProcessBatch()) {
             throw new ConnectorTaskException("Batch processing is not supported for binary data.");
@@ -89,10 +89,10 @@ public class TcpReceiver extends SourceConnector {
         String configurationClass = getConfigurationClass();
 
         try {
-            configuration = (TcpConfiguration) Class.forName(configurationClass).newInstance();
+            configuration = (AstmLightConfiguration) Class.forName(configurationClass).newInstance();
         } catch (Throwable t) {
             logger.trace("could not find custom configuration class, using default");
-            configuration = new DefaultTcpConfiguration();
+            configuration = new DefaultAstmLightConfiguration();
         }
 
         try {
@@ -454,7 +454,7 @@ public class TcpReceiver extends SourceConnector {
         try {
             if (dispatchResult.getSelectedResponse() != null) {
                 // Only if we're responding on a new connection can we handle recovered responses
-                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION || connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION_ON_RECOVERY) {
+                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION || connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION_ON_RECOVERY) {
                     BatchStreamReader batchStreamReader = new DefaultBatchStreamReader(null);
                     StreamHandler streamHandler = transmissionModeProvider.getStreamHandler(null, null, batchStreamReader, connectorProperties.getTransmissionModeProperties());
 
@@ -480,7 +480,7 @@ public class TcpReceiver extends SourceConnector {
 
     @Override
     protected String getConfigurationClass() {
-        return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
+        return configurationController.getProperty(connectorProperties.getProtocol(), "astmLightConfigurationClass");
     }
 
     protected class TcpReader implements Callable<Throwable>, BatchMessageReceiver {
@@ -541,7 +541,7 @@ public class TcpReceiver extends SourceConnector {
 
                         OutputStream outputStream = null;
 
-                        if (connectorProperties.getRespondOnNewConnection() != TcpReceiverProperties.NEW_CONNECTION) {
+                        if (connectorProperties.getRespondOnNewConnection() != AstmLightReceiverProperties.NEW_CONNECTION) {
                             // If we're not responding on a new connection, then write to the output stream of the same socket
                             responseSocket = socket;
                             outputStream = new BufferedOutputStream(responseSocket.getOutputStream(), bufferSize);
@@ -617,15 +617,15 @@ public class TcpReceiver extends SourceConnector {
                                         if (dispatchResult != null && dispatchResult.getSelectedResponse() != null) {
                                             try {
                                                 // If the response socket hasn't been initialized, do that now
-                                                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION) {
+                                                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION) {
                                                     responseSocket = createResponseSocket();
                                                     connectResponseSocket(responseSocket, streamHandler);
                                                 }
 
-                                                sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION);
+                                                sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION);
                                             } catch (IOException e) {
                                             } finally {
-                                                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
+                                                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
                                                     closeSocketQuietly(responseSocket);
                                                 }
                                             }
@@ -663,16 +663,16 @@ public class TcpReceiver extends SourceConnector {
 
                                             try {
                                                 // If the response socket hasn't been initialized, do that now
-                                                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION) {
+                                                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION) {
                                                     responseSocket = createResponseSocket();
                                                     connectResponseSocket(responseSocket, streamHandler);
                                                 }
 
-                                                sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION);
+                                                sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION);
                                             } catch (IOException e) {
                                                 dispatchResult.setResponseError(ErrorMessageBuilder.buildErrorMessage(connectorProperties.getName(), "Error sending response.", e));
                                             } finally {
-                                                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
+                                                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
                                                     closeSocketQuietly(responseSocket);
                                                 }
                                             }
@@ -741,7 +741,7 @@ public class TcpReceiver extends SourceConnector {
 
                 // We're done reading, so close everything up
                 closeSocketQuietly(socket);
-                if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION) {
+                if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION) {
                     closeSocketQuietly(responseSocket);
                 }
 
@@ -822,16 +822,16 @@ public class TcpReceiver extends SourceConnector {
 
                     try {
                         // If the response socket hasn't been initialized, do that now
-                        if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION) {
+                        if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION) {
                             responseSocket = createResponseSocket();
                             connectResponseSocket(responseSocket, streamHandler);
                         }
 
-                        sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION);
+                        sendResponse(dispatchResult.getSelectedResponse().getMessage(), responseSocket, streamHandler, connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION);
                     } catch (IOException e) {
                         dispatchResult.setResponseError(ErrorMessageBuilder.buildErrorMessage(connectorProperties.getName(), "Error sending response.", e));
                     } finally {
-                        if (connectorProperties.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
+                        if (connectorProperties.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION || !connectorProperties.isKeepConnectionOpen()) {
                             closeSocketQuietly(responseSocket);
                         }
                     }

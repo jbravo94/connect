@@ -36,9 +36,9 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TcpListener extends ConnectorSettingsPanel implements ActionListener {
+public class AstmLightListener extends ConnectorSettingsPanel implements ActionListener {
 
-    public static final String NEW_CONNECTION_PLUGIN_PROPS = "tcpListenerNewConnectionPluginProperties";
+    public static final String NEW_CONNECTION_PLUGIN_PROPS = "astmLightListenerNewConnectionPluginProperties";
 
     private Frame parent;
     private TransmissionModeClientProvider defaultProvider;
@@ -46,7 +46,7 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
     private String selectedMode;
     private boolean modeLock = false;
 
-    public TcpListener() {
+    public AstmLightListener() {
         this.parent = PlatformUI.MIRTH_FRAME;
         initComponents();
         initToolTips();
@@ -75,12 +75,12 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
 
     @Override
     public String getConnectorName() {
-        return new TcpReceiverProperties().getName();
+        return new AstmLightReceiverProperties().getName();
     }
 
     @Override
     public ConnectorProperties getProperties() {
-        TcpReceiverProperties properties = new TcpReceiverProperties();
+        AstmLightReceiverProperties properties = new AstmLightReceiverProperties();
 
         if (transmissionModeProvider != null) {
             properties.setTransmissionModeProperties((TransmissionModeProperties) transmissionModeProvider.getProperties());
@@ -98,11 +98,11 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
         properties.setDataTypeBinary(dataTypeBinaryRadio.isSelected());
 
         if (respondOnNewConnectionYesRadio.isSelected()) {
-            properties.setRespondOnNewConnection(TcpReceiverProperties.NEW_CONNECTION);
+            properties.setRespondOnNewConnection(AstmLightReceiverProperties.NEW_CONNECTION);
         } else if (respondOnNewConnectionNoRadio.isSelected()) {
-            properties.setRespondOnNewConnection(TcpReceiverProperties.SAME_CONNECTION);
+            properties.setRespondOnNewConnection(AstmLightReceiverProperties.SAME_CONNECTION);
         } else if (respondOnNewConnectionRecoveryRadio.isSelected()) {
-            properties.setRespondOnNewConnection(TcpReceiverProperties.NEW_CONNECTION_ON_RECOVERY);
+            properties.setRespondOnNewConnection(AstmLightReceiverProperties.NEW_CONNECTION_ON_RECOVERY);
         }
         properties.setResponseAddress(responseAddressField.getText());
         properties.setResponsePort(responsePortField.getText());
@@ -118,7 +118,7 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
 
     @Override
     public void setProperties(ConnectorProperties properties) {
-        TcpReceiverProperties props = (TcpReceiverProperties) properties;
+        AstmLightReceiverProperties props = (AstmLightReceiverProperties) properties;
 
         TransmissionModeProperties modeProps = props.getTransmissionModeProperties();
         String name = "Basic TCP";
@@ -186,15 +186,15 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
         }
 
         switch (props.getRespondOnNewConnection()) {
-            case TcpReceiverProperties.NEW_CONNECTION:
+            case AstmLightReceiverProperties.NEW_CONNECTION:
                 respondOnNewConnectionYesRadio.setSelected(true);
                 respondOnNewConnectionYesRadioActionPerformed();
                 break;
-            case TcpReceiverProperties.SAME_CONNECTION:
+            case AstmLightReceiverProperties.SAME_CONNECTION:
                 respondOnNewConnectionNoRadio.setSelected(true);
                 respondOnNewConnectionNoRadioActionPerformed();
                 break;
-            case TcpReceiverProperties.NEW_CONNECTION_ON_RECOVERY:
+            case AstmLightReceiverProperties.NEW_CONNECTION_ON_RECOVERY:
                 respondOnNewConnectionRecoveryRadio.setSelected(true);
                 respondOnNewConnectionRecoveryRadioActionPerformed();
                 break;
@@ -206,7 +206,7 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
 
     @Override
     public ConnectorProperties getDefaults() {
-        TcpReceiverProperties props = new TcpReceiverProperties();
+        AstmLightReceiverProperties props = new AstmLightReceiverProperties();
         if (defaultProvider != null) {
             props.setTransmissionModeProperties(defaultProvider.getDefaultProperties());
         }
@@ -220,7 +220,7 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
 
     @Override
     public boolean checkProperties(ConnectorProperties properties, boolean highlight) {
-        TcpReceiverProperties props = (TcpReceiverProperties) properties;
+        AstmLightReceiverProperties props = (AstmLightReceiverProperties) properties;
 
         boolean valid = true;
 
@@ -269,7 +269,7 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
                 maxConnectionsField.setBackground(UIConstants.INVALID_COLOR);
             }
         }
-        if (props.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION || props.getRespondOnNewConnection() == TcpReceiverProperties.NEW_CONNECTION_ON_RECOVERY) {
+        if (props.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION || props.getRespondOnNewConnection() == AstmLightReceiverProperties.NEW_CONNECTION_ON_RECOVERY) {
             if (props.getResponseAddress().length() <= 3) {
                 valid = false;
                 if (highlight) {
