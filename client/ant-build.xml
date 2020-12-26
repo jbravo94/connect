@@ -57,6 +57,7 @@
 		<property name="plugins.datapruner" value="${extensions}/datapruner" />
 		<property name="plugins.globalmapviewer" value="${extensions}/globalmapviewer" />
 		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+		<property name="plugins.astmlightmode" value="${extensions}/astmlightmode" />
 		<property name="plugins.pdfviewer" value="${extensions}/pdfviewer" />
 		<property name="plugins.textviewer" value="${extensions}/textviewer" />
 		<property name="plugins.rulebuilder" value="${extensions}/rulebuilder" />
@@ -292,6 +293,11 @@
 		<mkdir dir="${plugins.mllpmode}" />
 		<jar destfile="${plugins.mllpmode}/mllpmode-client.jar" basedir="${classes}">
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
+		</jar>
+
+		<mkdir dir="${plugins.astmlightmode}" />
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-client.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/**" />
 		</jar>
 
 		<mkdir dir="${plugins.pdfviewer}" />

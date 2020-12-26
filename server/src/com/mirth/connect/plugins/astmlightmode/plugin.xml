@@ -1,0 +1,17 @@
+<pluginMetaData path="mllpmode">
+	<name>Transmission Mode - MLLP</name>
+	<author>NextGen Healthcare</author>
+	<pluginVersion>@mirthversion</pluginVersion>
+	<mirthVersion>3.10.0</mirthVersion>
+	<url>http://www.nextgen.com</url>
+	<description>This plugin provides an MLLP transmission mode for socket/serial connectors.</description>
+	<serverClasses>
+		<string>com.mirth.connect.plugins.astmlightmode.ASTMLightModeProvider</string>
+	</serverClasses>
+	<clientClasses>
+		<string>com.mirth.connect.plugins.astmlightmode.ASTMLightModePlugin</string>
+	</clientClasses>
+	<library type="CLIENT" path="astmlightmode-client.jar" />
+	<library type="SERVER" path="astmlightmode-server.jar" />
+	<library type="SHARED" path="astmlightmode-shared.jar" />
+</pluginMetaData>

@@ -56,6 +56,7 @@
 		<property name="plugins.datapruner" value="${extensions}/datapruner" />
 		<property name="plugins.globalmapviewer" value="${extensions}/globalmapviewer" />
 		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+		<property name="plugins.astmlightmode" value="${extensions}/astmlightmode" />
 		<property name="plugins.pdfviewer" value="${extensions}/pdfviewer" />
 		<property name="plugins.textviewer" value="${extensions}/textviewer" />
 		<property name="plugins.rulebuilder" value="${extensions}/rulebuilder" />
@@ -856,6 +857,25 @@
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
 			<exclude name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
 		</jar>
+
+		<!-- plugins.astmlightmode -->
+		<mkdir dir="${plugins.astmlightmode}" />
+		<copy todir="${plugins.astmlightmode}">
+			<fileset dir="${src}/com/mirth/connect/plugins/astmlightmode">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${plugins.astmlightmode}/lib" failonerror="false">
+			<fileset dir="${lib.extensions}/astmlightmode" />
+		</copy>
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-shared.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/ASTMLightModeProperties.class" />
+		</jar>
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-server.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/**" />
+			<exclude name="com/mirth/connect/plugins/astmlightmode/ASTMLightProperties.class" />
+		</jar>
+
 
 		<!-- plugins.pdfviewer -->
 		<mkdir dir="${plugins.pdfviewer}" />
