@@ -105,3 +105,6 @@ In 2019, Oracle significantly changed licensing for official Oracle Java release
 NextGen Connect is released under the [Mozilla Public License version 1.1](https://www.mozilla.org/en-US/MPL/1.1/ "Mozilla Public License version 1.1"). You can find a copy of the license in `server/docs/LICENSE.txt`.
 
 All licensing information regarding third-party libraries is located in the `server/docs/thirdparty` folder.
+
+## 8. Custom Extensions
+If the certificate used for signing the jars is not included in the launcher and/or Mirth, it will throw an error. One can overcome this by executing the launcher from the installation directory via `jre\bin\java.exe -jar mirth-client-launcher.jar --allow-self-signed`
