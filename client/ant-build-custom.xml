@@ -1,0 +1,130 @@
+<project name="mirth-client" basedir="." default="help">
+	<target name="help">
+		<echo>Mirth Client Build Help</echo>
+		<echo>-----------------------</echo>
+	</target>
+
+	<target name="init">
+		<property file="build.properties" />
+
+		<path id="classpath">
+			<fileset dir="${lib}" includes="**/*.jar" />
+			<!-- include the extensions libs in case they have jars required for the client -->
+			<fileset dir="${server}/lib/extensions" includes="**/*.jar" />
+		</path>
+
+		<mkdir dir="${logs}" />
+
+		<property name="extensions" value="${dist}/extensions" />
+
+		<!-- plugins -->
+		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${classes}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<target name="compile" depends="clean, init">
+		<mkdir dir="${classes}" />
+		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
+			<classpath refid="classpath" />
+		</javac>
+
+		<copy todir="${classes}" file="${src}/log4j.properties" />
+
+		<!-- copy the image files so they will be included in jar -->
+		<copy todir="${classes}/com/mirth/connect/client/ui/images">
+			<fileset dir="${src}/com/mirth/connect/client/ui/images" />
+		</copy>
+		
+		<!-- Copy syntax text area resource bundle properties files -->
+		<copy todir="${classes}/com/mirth/connect/client/ui/components/rsta">
+			<fileset dir="${src}/com/mirth/connect/client/ui/components/rsta">
+				<include name="*.properties" />
+			</fileset>
+		</copy>
+		
+		<!-- Copy HTML files to use with JavaFX -->
+		<copy todir="${classes}/com/mirth/connect/client/ui/components/tag">
+			<fileset dir="${src}/com/mirth/connect/client/ui/components/tag">
+				<include name="*.html" />
+				<include name="*.css" />
+				<include name="*.js" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build" depends="compile">
+		<mkdir dir="${dist}" />
+
+		<jar destfile="${dist}/${client.jar}">
+			<fileset dir="${classes}">
+				<exclude name="com/mirth/connect/connectors/**/**" />
+			</fileset>
+			<fileset dir="${classes}">
+				<include name="com/mirth/connect/connectors/ConnectorClass.class" />
+			</fileset>
+		</jar>
+
+		<!-- plugins -->
+		<mkdir dir="${plugins.mllpmode}" />
+		<jar destfile="${plugins.mllpmode}/mllpmode-client.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/mllpmode/**" />
+		</jar>
+	</target>
+	
+	<target name="test-init" depends="init">
+		<delete dir="${test_classes}" />
+		
+		<path id="testclasspath">
+			<path refid="classpath" />
+			<fileset dir="${server}/testlib" includes="**/*.jar" />
+			<dirset dir="${classes}"/>
+		</path>
+	</target>
+	
+	<target name="test-compile" depends="test-init">
+		<!-- compile the source -->
+		<mkdir dir="${test_classes}" />
+		
+		<javac srcdir="${test}" destdir="${test_classes}" debug="on" includeAntRuntime="false">
+			<classpath refid="testclasspath" />
+		</javac>
+	</target>
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="${server}/lib/ant/jacocoant.jar"/>
+	</taskdef>
+	
+	<target name="test-run" depends="test-compile">
+		<property name="junit-reports" value="junit-reports" />
+		<property name="code-coverage-reports" value="code-coverage-reports" />
+		<mkdir dir="${junit-reports}" />
+		<mkdir dir="${code-coverage-reports}" />
+		
+		<jacoco:coverage destfile="${code-coverage-reports}/jacoco.exec" xmlns:jacoco="antlib:org.jacoco.ant" exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader" >
+			<junit haltonfailure="false" fork="true" forkmode="once">
+				<jvmarg value="-Xms128m" />
+				<jvmarg value="-Xmx1024m" />
+				<classpath>
+					<path refid="testclasspath" />
+					<dirset dir="${test_classes}"/>
+				</classpath>
+				<formatter type="xml" />
+				<batchtest todir="${junit-reports}">
+					<fileset dir="${test_classes}">
+						<include name="**/*Test.class" />
+					</fileset>
+				</batchtest>
+			</junit>
+		</jacoco:coverage>
+	</target>
+	
+	<target name="remove-classes" depends="init">
+		<!-- delete the compiled classes folder -->
+		<delete dir="${classes}" />
+		<delete dir="${test_classes}" />
+	</target>
+</project>

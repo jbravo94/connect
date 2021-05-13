@@ -1,0 +1,396 @@
+<?xml version="1.0"?>
+<project name="mirth-server" basedir="." default="help">
+
+	<property name="keystore_property_file" value="keystore.properties" />
+	<property name="manifest_thread_count" value="4" />
+	<property name="signjar_thread_count" value="4" />
+	<property name="jdk_src_path" value="" />
+
+	<target name="help">
+		<echo>Mirth Connect Build Help</echo>
+	</target>
+
+	<target name="init">
+		<property file="build.properties" />
+
+		<path id="classpath">
+			<fileset dir="${lib}" includes="**/*.jar" />
+		</path>
+
+		<!-- plugins -->
+		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${logs}" />
+		<mkdir dir="${logs}" />
+
+		<delete dir="${classes}" />
+		<delete dir="${setup}" />
+		<delete dir="${dist}" />
+		<delete dir="${build}" />
+		<delete dir="${docs.javadocs}" />
+	</target>
+
+	<target name="compile" depends="clean, init, create-javadocs">
+		<!-- compile the source -->
+		<mkdir dir="${classes}" />
+
+		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
+			<classpath refid="classpath" />
+			<!-- Uncomment the following and add additioinal dashes in front of the arguments to allow Java 9+> -->
+				<compilerarg value="--add-modules" />
+				<compilerarg value="java.sql.rowset,java.xml.ws" />
+				<compilerarg value="--add-exports" />
+				<compilerarg value="java.sql.rowset/com.sun.rowset=ALL-UNNAMED" />
+		</javac>
+
+		<!-- create version.properties file -->
+		<propertyfile file="version.properties">
+			<entry key="mirth.version" value="${version}" />
+			<entry key="mirth.date" type="date" value="today" pattern="MMMM d, yyyy" />
+		</propertyfile>
+
+		<!-- copy resource files to be placed in jars -->
+		<copy todir="${classes}">
+			<fileset file="version.properties" />
+			<fileset file="mirth-client.jnlp" />
+		</copy>
+		<copy todir="${classes}/com/mirth/connect/util">
+			<fileset dir="${src}/com/mirth/connect/util">
+				<include name="*.js" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="create-client-core" depends="compile">
+		<jar destfile="${setup.server.lib}/${client-core.jar}" basedir="${classes}">
+			<include name="com/mirth/connect/client/core/**" />
+			<include name="com/mirth/connect/model/**" />
+			<include name="com/mirth/connect/userutil/**" />
+			<include name="com/mirth/connect/util/**" />
+			<include name="com/mirth/connect/server/util/ResourceUtil.class" />
+			<include name="org/mozilla/**" />
+			<include name="org/glassfish/jersey/**" />
+			<include name="de/**" />
+			<include name="net/lingala/zip4j/unzip/**" />
+
+			<include name="version.properties" />
+		</jar>
+
+		<copy file="${lib}/mirth-crypto.jar" todir="${setup.server.lib}" />
+	</target>
+
+	<target name="create-connectors" depends="create-client-core">
+
+		
+		<!-- set the version on all connectors
+		<replace dir="${extensions}" token="@mirthversion" value="${version}">
+			<include name="**/*.xml" />
+		</replace>
+		-->
+	</target>
+
+	<target name="create-plugins" depends="create-connectors">
+		
+		<!-- plugins.mllpmode -->
+		<mkdir dir="${plugins.mllpmode}" />
+		<copy todir="${plugins.mllpmode}">
+			<fileset dir="${src}/com/mirth/connect/plugins/mllpmode">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${plugins.mllpmode}/lib" failonerror="false">
+			<fileset dir="${lib.extensions}/mllpmode" />
+		</copy>
+		<jar destfile="${plugins.mllpmode}/mllpmode-shared.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
+		</jar>
+		<jar destfile="${plugins.mllpmode}/mllpmode-server.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/mllpmode/**" />
+			<exclude name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
+		</jar>
+
+		<!-- set the version on all plugins -->
+		<replace dir="${extensions}" token="@mirthversion" value="${version}">
+			<include name="**/*.xml" />
+		</replace>
+	</target>
+
+	<target name="create-setup" depends="init">
+		<echo>Sub-project files have been copied into setup</echo>
+
+		<!-- create the setup directory -->
+		<mkdir dir="${setup}" />
+		<mkdir dir="${setup.conf}" />
+		<mkdir dir="${setup.extensions}" />
+		<mkdir dir="${setup.public_html}" />
+		<mkdir dir="${setup.public_api_html}" />
+		<mkdir dir="${setup.server.lib}" />
+		<mkdir dir="${setup.client.lib}" />
+		<mkdir dir="${setup.manager.lib}" />
+		<mkdir dir="${setup.cli.lib}" />
+		<mkdir dir="${setup.logs}" />
+		<mkdir dir="${setup.docs}" />
+		<mkdir dir="${setup.server.launcher.lib}" />
+
+		<!-- copy lib -->
+		<copy todir="${setup.server.lib}">
+			<fileset dir="${lib}">
+				<exclude name="ant/**" />
+				<exclude name="extensions/**" />
+			</fileset>
+		</copy>
+
+		<!-- copy conf files -->
+		<copy todir="${setup.conf}">
+			<fileset dir="${conf}" />
+		</copy>
+
+		<!-- copy public html files -->
+		<copy todir="${setup.public_html}">
+			<fileset dir="${public_html}">
+				<exclude name="Thumbs.db" />
+			</fileset>
+		</copy>
+		
+		<replace dir="${setup.public_html}" token="@mirthversion" value="${version}">
+			<include name="*.html" />
+		</replace>
+		
+		<!-- copy Swagger UI files -->
+		<copy todir="${setup.public_api_html}">
+			<fileset dir="${public_api_html}">
+				<exclude name="Thumbs.db" />
+			</fileset>
+		</copy>
+
+		<!-- copy extensions files -->
+		<copy todir="${setup.extensions}">
+			<fileset dir="${extensions}" />
+		</copy>
+
+		<!-- copy docs files -->
+		<copy todir="${setup.docs}">
+			<fileset dir="${docs}" />
+		</copy>
+
+		<!-- create the server jar -->
+		<jar destfile="${setup.server.lib}/${server.jar}" basedir="${classes}">
+			<include name="com/mirth/connect/server/**" />
+			<include name="com/mirth/connect/model/**" />
+			<include name="com/mirth/connect/util/**" />
+			<include name="com/mirth/connect/plugins/*.class" />
+			<include name="com/mirth/connect/connectors/*.class" />
+			<include name="org/**" />
+			<include name="net/sourceforge/jtds/ssl/**" />
+
+			<include name="mirth-client.jnlp" />
+
+			<exclude name="com/mirth/connect/server/launcher/**" />
+			<exclude name="org/dcm4che2/**" />
+		</jar>
+
+		<!-- create the dbconf jar -->
+		<jar destfile="${setup.server.lib}/${dbconf.jar}" basedir="${dbconf}" />
+
+		<!-- create the mirth-launcher jar -->
+		<jar destfile="${setup}/${mirth-launcher.jar}" basedir="${classes}">
+			<include name="com/mirth/connect/server/launcher/**" />
+			<include name="com/mirth/connect/server/extprops/**" />
+
+			<manifest>
+				<attribute name="Main-Class" value="com.mirth.connect.server.launcher.MirthLauncher" />
+				<attribute name="Class-Path" value="server-lib/commons/commons-io-2.6.jar server-lib/commons/commons-configuration2-2.7.jar server-lib/commons/commons-lang3-3.9.jar server-lib/commons/commons-logging-1.2.jar server-lib/commons/commons-beanutils-1.9.3.jar server-lib/commons/commons-text-1.8.jar conf/" />
+			</manifest>
+		</jar>
+		
+		<!-- create the userutil-sources jar -->
+		<jar destfile="${setup.client.lib}/${userutil-sources.jar}" basedir="${src}">
+			<include name="com/mirth/connect/userutil/**.java" />
+			<include name="com/mirth/connect/server/userutil/**.java" />
+			<exclude name="**/package-info.java" />
+		</jar>
+
+		<!-- remove svn folders -->
+		<delete>
+			<fileset dir="${setup}" includes="**/.svn" />
+		</delete>
+		
+		<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath" />
+
+		<!-- modify jar manifests -->
+		<!-- don't modify bcprov, since it already has the manifest changes and is signed by BC -->
+		<echo message="[Thread Count: ${manifest_thread_count}] Modifying jar manifests to add Permissions: all-permissions; Codebase: *; Application-Name: Mirth Connect" />
+		<for param="jarFile" parallel="true" threadCount="${manifest_thread_count}">
+	    	<fileset dir="${setup.client.lib}" includes="**/*.jar" excludes="bcp*.jar"/>
+	    	<fileset dir="${setup.extensions}" includes="**/*.jar" />
+			<sequential>
+				<apply executable="jar">
+			        <arg value="umf" />
+			        <arg line="custom_manifest.mf" />
+			        <srcfile />
+			    	<fileset file="@{jarFile}"/>
+			    </apply>
+			</sequential>
+		</for>
+
+		<!-- sign jars for webstart -->
+		<echo message="[Thread Count: ${signjar_thread_count}] Signing jars for Java Web Start" />
+		<property file="${keystore_property_file}" />
+		
+		<for param="jarFile" parallel="true" threadCount="${signjar_thread_count}">
+			<!-- <fileset dir="${setup.client.lib}" includes="**/*.jar" /> -->
+			<fileset dir="${setup.extensions}" includes="**/*.jar" />
+			<sequential>
+				<retry retrycount="5" retrydelay="1000">
+					<signjar jar="@{jarFile}" alias="${key.alias}" keystore="${key.keystore}" storepass="${key.storepass}" keypass="${key.keypass}" storetype="${key.storetype}" tsaurl="http://sha256timestamp.ws.symantec.com/sha256/timestamp" digestalg="SHA-256">
+						<!-- http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7127374 -->
+						<sysproperty key="jsse.enableSNIExtension" value="false" />
+						<sysproperty key="https.protocols" value="TLSv1.2,TLSv1.1" />
+					</signjar>
+				</retry>
+			</sequential>
+		</for>
+	</target>
+
+	<target name="create-extension-zips" depends="create-setup">
+		<delete dir="${dist.extensions}" />
+		<mkdir dir="${dist.extensions}" />
+
+		<zip destfile="${dist.extensions}/mllpmode-${version}.zip" basedir="${extensions}" includes="mllpmode/**/*" />
+	</target>
+
+	<target name="create-dist" depends="create-extension-zips">
+		<mkdir dir="${dist}" />
+	</target>
+	
+	<target name="create-javadocs" depends="init">
+		<mkdir dir="${docs.javadocs}" />
+		
+		<javadoc sourcepath="${src}:${jdk_src_path}" destdir="${docs.javadocs.userapi}" packagenames="com.mirth.connect.server.userutil,com.mirth.connect.userutil,com.mirth.connect.plugins.httpauth.userutil" link="https://docs.oracle.com/javase/8/docs/api/">
+			<classpath refid="classpath" />
+			<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+ -->
+				<arg line="-html5"/>
+				<arg line="--add-modules java.sql.rowset"/>
+				<arg line="--add-exports java.sql.rowset/com.sun.rowset=ALL-UNNAMED"/>
+		</javadoc>
+	</target>
+
+	<target name="create-derby-db" depends="compile">
+		<!-- re-create the embedded database -->
+		<delete dir="mirthdb" />
+		<java classname="com.mirth.connect.server.tools.ScriptRunner" fork="true" dir="${basedir}" failonerror="true">
+			<classpath>
+				<pathelement location="${setup.server.lib}/${server.jar}" />
+				<pathelement location="classes" />
+				<pathelement location="${setup.conf}" />
+				<fileset dir="${lib}">
+					<include name="log4j-1.2.16.jar" />
+					<include name="database/derby-10.10.2.0.jar" />
+					<include name="database/derbytools-10.10.2.0.jar" />
+					<include name="commons/commons-io-2.3.jar" />
+				</fileset>
+			</classpath>
+			<arg value="dbconf/derby/derby-database.sql" />
+		</java>
+	</target>
+
+	<target name="dev-launcher" depends="init" description="This runs Mirth using the setup launcher">
+		<java classname="com.mirth.connect.server.launcher.MirthLauncher" fork="true" dir="${setup}" failonerror="true">
+			<classpath>
+				<pathelement location="${setup}/mirth-launcher.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="dev-run" depends="init" description="This runs the mirth server using the Eclipse environment">
+		<java classname="com.mirth.connect.server.Mirth" fork="true" dir="${basedir}" failonerror="true">
+			<classpath>
+				<pathelement location="bin" />
+				<pathelement location="conf" />
+				<pathelement location="build" />
+				<fileset dir="${lib}">
+					<include name="**/*.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="test-init" depends="init">
+		<delete dir="${test_classes}" />
+		
+		<path id="testclasspath">
+			<fileset dir="testlib" includes="**/*.jar" />
+			<dirset dir="${classes}"/>
+			<path refid="classpath" />
+		</path>
+	</target>
+	
+	<target name="test-compile" depends="test-init">
+		<!-- compile the source -->
+		<mkdir dir="${test_classes}" />
+		
+		<javac srcdir="${test}" destdir="${test_classes}" debug="on" includeAntRuntime="false">
+			<classpath refid="testclasspath" />
+			<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+ -->
+				<compilerarg value="--add-modules" />
+				<compilerarg value="java.sql.rowset,java.xml.ws" />
+				<compilerarg value="--add-exports" />
+				<compilerarg value="java.sql.rowset/com.sun.rowset=ALL-UNNAMED" />
+		</javac>
+		
+		<copy todir="${test_classes}">
+			<fileset dir="${test}">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		
+		<jar destfile="${test.dist}/${tests.jar}" basedir="${test_classes}">
+			<include name="**/*" />
+		</jar>
+	</target>
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="lib/ant/jacocoant.jar"/>
+	</taskdef>
+	
+	<target name="test-run" depends="test-compile">
+		<property name="junit-reports" value="junit-reports" />
+		<property name="code-coverage-reports" value="code-coverage-reports" />
+		<mkdir dir="${junit-reports}" />
+		<mkdir dir="${code-coverage-reports}" />
+		
+		<jacoco:coverage destfile="${code-coverage-reports}/jacoco.exec" xmlns:jacoco="antlib:org.jacoco.ant" exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader" >
+			<junit haltonfailure="false" fork="true" forkmode="once">
+				<jvmarg value="-Xms128m" />
+				<jvmarg value="-Xmx1024m" />
+				<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+ -->
+					<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.base/java.text=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.desktop/java.awt=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED" />
+					<jvmarg value="--add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.trax=ALL-UNNAMED" />
+				<classpath>
+					<path refid="testclasspath" />
+					<dirset dir="${test_classes}"/>
+				</classpath>
+				<formatter type="xml" />
+				<batchtest todir="${junit-reports}">
+					<fileset dir="${test_classes}">
+						<include name="**/*Test.class" />
+					</fileset>
+				</batchtest>
+			</junit>
+		</jacoco:coverage>
+	</target>
+	
+	<target name="remove-classes" depends="init">
+		<!-- delete the compiled classes folder -->
+		<delete dir="${classes}" />
+		<delete dir="${test_classes}" />
+	</target>
+</project>
