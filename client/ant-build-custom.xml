@@ -19,6 +19,7 @@
 
 		<!-- plugins -->
 		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+		<property name="plugins.astmlightmode" value="${extensions}/astmlightmode" />
 	</target>
 
 	<target name="clean" depends="init">
@@ -32,6 +33,7 @@
 			<src path="${src}" />
 			<include name="com/mirth/connect/client/**" />
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
+			<include name="com/mirth/connect/plugins/astmlightmode/**" />
 			<classpath refid="classpath" />
 		</javac>
 
@@ -75,6 +77,11 @@
 		<mkdir dir="${plugins.mllpmode}" />
 		<jar destfile="${plugins.mllpmode}/mllpmode-client.jar" basedir="${classes}">
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
+		</jar>
+
+		<mkdir dir="${plugins.astmlightmode}" />
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-client.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/**" />
 		</jar>
 	</target>
 	

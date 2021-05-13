@@ -23,6 +23,7 @@
 
 		<!-- plugins -->
 		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
+		<property name="plugins.astmlightmode" value="${extensions}/astmlightmode" />
 	</target>
 
 	<target name="clean" depends="init">
@@ -134,6 +135,24 @@
 		<jar destfile="${plugins.mllpmode}/mllpmode-server.jar" basedir="${classes}">
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
 			<exclude name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
+		</jar>
+
+		<!-- plugins.astmlightmode -->
+		<mkdir dir="${plugins.astmlightmode}" />
+		<copy todir="${plugins.astmlightmode}">
+			<fileset dir="${src}/com/mirth/connect/plugins/astmlightmode">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${plugins.astmlightmode}/lib" failonerror="false">
+			<fileset dir="${lib.extensions}/astmlightmode" />
+		</copy>
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-shared.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/ASTMLightModeProperties.class" />
+		</jar>
+		<jar destfile="${plugins.astmlightmode}/astmlightmode-server.jar" basedir="${classes}">
+			<include name="com/mirth/connect/plugins/astmlightmode/**" />
+			<exclude name="com/mirth/connect/plugins/astmlightmode/ASTMLightModeProperties.class" />
 		</jar>
 
 		<!-- set the version on all plugins -->
@@ -284,6 +303,7 @@
 		<mkdir dir="${dist.extensions}" />
 
 		<zip destfile="${dist.extensions}/mllpmode-${version}.zip" basedir="${extensions}" includes="mllpmode/**/*" />
+		<zip destfile="${dist.extensions}/astmlightmode-${version}.zip" basedir="${extensions}" includes="astmlightmode/**/*" />
 	</target>
 
 	<target name="create-dist" depends="create-extension-zips">
