@@ -1,4 +1,4 @@
-image: generic-build-image:v1.0.2
+image: generic-build-image-type-2:v1.0.3
 
 variables:
   proxy_ip: 192.168.245.184
