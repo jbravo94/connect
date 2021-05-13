@@ -28,7 +28,10 @@
 
 	<target name="compile" depends="clean, init">
 		<mkdir dir="${classes}" />
-		<javac srcdir="${src}" destdir="${classes}" debug="on" includeAntRuntime="false">
+		<javac destdir="${classes}" debug="on" includeAntRuntime="false">
+			<src path="${src}" />
+			<include name="com/mirth/connect/client/**" />
+			<include name="com/mirth/connect/plugins/mllpmode/**" />
 			<classpath refid="classpath" />
 		</javac>
 

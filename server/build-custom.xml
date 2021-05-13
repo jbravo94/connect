@@ -17,6 +17,9 @@
 			<fileset dir="${lib}" includes="**/*.jar" />
 		</path>
 
+		<!-- connectors -->
+		<property name="connectors.vm" value="${extensions}/vm" />
+
 		<!-- plugins -->
 		<property name="plugins.mllpmode" value="${extensions}/mllpmode" />
 	</target>
@@ -32,7 +35,7 @@
 		<delete dir="${docs.javadocs}" />
 	</target>
 
-	<target name="compile" depends="clean, init, create-javadocs">
+	<target name="compile" depends="clean, init">
 		<!-- compile the source -->
 		<mkdir dir="${classes}" />
 
@@ -83,12 +86,33 @@
 
 	<target name="create-connectors" depends="create-client-core">
 
-		
-		<!-- set the version on all connectors
+		<!-- connectors.vm -->
+		<mkdir dir="${connectors.vm}" />
+		<copy todir="${connectors.vm}">
+			<fileset dir="${src}/com/mirth/connect/connectors/vm">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${connectors.vm}/lib" failonerror="false">
+			<fileset dir="${lib.extensions}/vm" />
+		</copy>
+		<jar destfile="${connectors.vm}/vm-shared.jar" basedir="${classes}">
+			<include name="com/mirth/connect/connectors/vm/VmReceiverProperties.class" />
+			<include name="com/mirth/connect/connectors/vm/VmDispatcherProperties.class" />
+		</jar>
+		<jar destfile="${connectors.vm}/vm-server.jar">
+			<fileset dir="${classes}">
+				<include name="com/mirth/connect/connectors/vm/**" />
+				<exclude name="com/mirth/connect/connectors/vm/VmReceiverProperties.class" />
+				<exclude name="com/mirth/connect/connectors/vm/VmDispatcherProperties.class" />
+			</fileset>
+		</jar>
+
+		<!-- set the version on all connectors -->
 		<replace dir="${extensions}" token="@mirthversion" value="${version}">
 			<include name="**/*.xml" />
 		</replace>
-		-->
+
 	</target>
 
 	<target name="create-plugins" depends="create-connectors">
