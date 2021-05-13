@@ -302,8 +302,8 @@
 		<delete dir="${dist.extensions}" />
 		<mkdir dir="${dist.extensions}" />
 
-		<zip destfile="${dist.extensions}/mllpmode-${version}.zip" basedir="${extensions}" includes="mllpmode/**/*" />
-		<zip destfile="${dist.extensions}/astmlightmode-${version}.zip" basedir="${extensions}" includes="astmlightmode/**/*" />
+		<zip destfile="${dist.extensions}/mllpmode-${version}.zip" basedir="${setup.extensions}" includes="mllpmode/**/*" />
+		<zip destfile="${dist.extensions}/astmlightmode-${version}.zip" basedir="${setup.extensions}" includes="astmlightmode/**/*" />
 	</target>
 
 	<target name="create-dist" depends="create-extension-zips">
