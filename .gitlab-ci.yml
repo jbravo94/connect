@@ -14,7 +14,7 @@ stages:
 build:
   stage: build
   script:
-    - cd server && ant -Dhttp.proxyHost=$proxy_ip -Dhttp.proxyPort=$proxy_port -Dhttps.proxyHost=$proxy_ip -Dhttps.proxyPort=$proxy_port -Dhttp.nonProxyHosts=localhost\|127.0.0.1\|gitlab.vamed.com dist -f mirth-build-custom.xml
+    - cd server && ANT_OPTS="-Dhttp.proxyHost=$proxy_ip -Dhttp.proxyPort=$proxy_port -Dhttps.proxyHost=$proxy_ip -Dhttps.proxyPort=$proxy_port -Dhttp.nonProxyHosts=localhost\|127.0.0.1\|gitlab.vamed.com" ant dist -f mirth-build-custom.xml
   artifacts:
     paths:
       - server/dist/extensions/*
