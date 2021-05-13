@@ -106,5 +106,11 @@ NextGen Connect is released under the [Mozilla Public License version 1.1](https
 
 All licensing information regarding third-party libraries is located in the `server/docs/thirdparty` folder.
 
+------------
+
+<a name="custom-extensions"></a>
 ## 8. Custom Extensions
-If the certificate used for signing the jars is not included in the launcher and/or Mirth, it will throw an error. One can overcome this by executing the launcher from the installation directory via `jre\bin\java.exe -jar mirth-client-launcher.jar --allow-self-signed`
+
+* If the certificate used for signing the jars is not included in the launcher and/or Mirth, it will throw an error. One can overcome this by executing the launcher from the installation directory via `jre\bin\java.exe -jar mirth-client-launcher.jar --allow-self-signed`
+
+* If you experience any errors, you can start the UI with `Java Console` enabled for debugging. If you experience any class version mismatch install at lease the version which was used for building the extension. AdoptOpenJDK 11 works currently fine - you need to specify the installation directory in the field nearby `Custom`.
