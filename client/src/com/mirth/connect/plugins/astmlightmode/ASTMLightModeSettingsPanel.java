@@ -39,6 +39,7 @@ public class ASTMLightModeSettingsPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(22, 22));
 
         settingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mirth/connect/client/ui/images/wrench.png"))); // NOI18N
+        settingsButton.setEnabled(false);
         settingsButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         settingsButton.setMaximumSize(new java.awt.Dimension(22, 22));
         settingsButton.setMinimumSize(new java.awt.Dimension(22, 22));

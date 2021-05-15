@@ -71,7 +71,12 @@ public class ASTMLightModeClientProvider extends FrameTransmissionModeClientProv
 
     @Override
     public String getSampleLabel() {
-        return "MLLP Sample Frame:";
+        return "ASTM Sample Frame:";
+    }
+
+    @Override
+    public String getSampleValue() {
+        return ("<html><b><i>Not Available</i></b></html>").trim();
     }
 
     @Override
