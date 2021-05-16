@@ -1,20 +1,12 @@
 image: generic-build-image-type-2:v1.0.4
 
-variables:
-  proxy_ip: 192.168.245.184
-  proxy_port: 800
-  http_proxy: "http://$proxy_ip:$proxy_port"
-  https_proxy: "http://$proxy_ip:$proxy_port"
-  no_proxy: gitlab.vamed.com
-  GIT_SSL_NO_VERIFY: "true"
-
 stages:
   - build
 
 build:
   stage: build
   script:
-    - cd server && ANT_OPTS="-Dhttp.proxyHost=$proxy_ip -Dhttp.proxyPort=$proxy_port -Dhttps.proxyHost=$proxy_ip -Dhttps.proxyPort=$proxy_port -Dhttp.nonProxyHosts=localhost\|127.0.0.1\|gitlab.vamed.com" ant dist -f mirth-build-custom.xml
+    - cd server && ant dist -f mirth-build-custom.xml
   artifacts:
     paths:
       - server/dist/extensions/*
